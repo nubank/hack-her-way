@@ -3,7 +3,8 @@
 ### Flag 1
 Descrição
 ``` text
-Precisamos retomar o controle do site da companhia de abastecimento das mãos dos terroristas. Nosso primeiro passo é tentar repetir os passos deles para descobrir como recuperaram o código fonte.
+Precisamos retomar o controle do site da companhia de abastecimento das mãos dos terroristas. 
+Nosso primeiro passo é tentar repetir os passos deles para descobrir como recuperaram o código fonte.
 
 Recupere o código-fonte desta página.
 
@@ -26,7 +27,8 @@ ref: refs/heads/master
 
 Diante deste fato basta agora fazer o download de todo o repositório para a máquina local e inspecionar os logs e 
 commits em busca do código fonte. Para isso podemos utilizar uma ferramenta que extrai a estrutura do repositório, 
-como a `git-dumper` disponível em (https://github.com/arthaud/git-dumper)[https://github.com/arthaud/git-dumper]. Para instalar a executar seguimos os 
+como a `git-dumper` disponível em [https://github.com/arthaud/git-dumper](https://github.com/arthaud/git-dumper). 
+Para instalar a executar seguimos os 
 passos a seguir (já com Python 3 instalado):
 
 ```shell
@@ -44,6 +46,7 @@ python3 git_dumper.py http://URL_desafio/.git desafio
 ```
 
 Ao executar o script acima teremos a seguinte saída, conforme imagem abaixo:
+
 ![img.png](images/img.png)
 
 Agora precisamos verificar os logs do repositório, através dos comandos abaixo:
@@ -52,6 +55,7 @@ Agora precisamos verificar os logs do repositório, através dos comandos abaixo
 git log
 ```
 Obtemos a seguinte saída:
+
 ![img.png](images/img2.png)
 
 Detectamos que há um commit anterior no repositório, o commit X. Executando o comando abaixo podemos verificar quais arquivos foram alterados.
@@ -60,9 +64,11 @@ Detectamos que há um commit anterior no repositório, o commit X. Executando o 
 git show --name-only 2b9613d5befa217ea7610aef6dc2c7ff04cfc2b4
 ```
 Que nos dará a seguinte saída.
+
 ![img_1.png](images/img_1.png)
 
 Notamos a existência do arquivo `secrets.txt`. Entretanto, esse arquivo não está mais no commit atual, se fizermos um `git show` no HEAD podemos obter a mudança feita com a retirada do arquivos.
+
 ![img_2.png](images/img_2.png)
 
 Descobrimos a primeira flag: `YSH{RepoSitOrios_No_Document_Ro0T}`
@@ -81,9 +87,11 @@ O que procuramos está em /flag.txt
 Na segunda flag nos é informado apenas que devemos continuar a investida, logo como estamos diante do código-fonte da aplicação podemos fazer uma revisão do código para detectar algum comportamento estranho.
 
 Ao abrirmos o conteúdo do arquivo `index.php` visualizamos o trecho de código abaixo.
+
 ![img_3.png](images/img_3.png)
 
 Imediatamente podemos observar que a entrada do usuário `$_GET['segredo']` está sendo passada como argumento para a função `unserialize` o que pode resultar em desserialização insegura, ou mais precisamente object injection no PHP. Há também no início do arquivo um `include "classes.php"`. Como suspeitamos de desserialização, é primordial saber quais classes estão carregadas que podem ser desserializadas.
+
 ![img_4.png](images/img_4.png)
 
 Observando o código acima, podemos perceber a presença da função `exec` usando o atributo `$this->username` como parte do argumento passado. A função `exec` é responsável por executar um programa externo, desta forma, se conseguirmos alterar o atributo `username` conseguiremos execução de comando no backend do sistema. Porém, como chamar o `__destruct` neste caso?
@@ -105,6 +113,7 @@ echo base64_encode(serialize($u));
 
 Executando o código acima, teremos como resultado o objeto PHP serializado em base64. Porém, precisamos ter um 
 servidor web, ou a porta 80 aberta, aguardando essa request para que possamos capturar o arquivo enviado. Por fim, acessamos a URL `http://18.231.191.84/?segredo=BASE64_AQUI` passando como valor do parâmetro `segredo` o base64 criado acima, e assim receberemos a seguinte request:
+
 ![img_5.png](images/img_5.png)
 
 E capturamos a flag 2: `YSH{WOW_DESSERIALIZACAO_FTW_!!CONGRATS!!}`
